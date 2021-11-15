@@ -64,7 +64,7 @@ linmod_1 <- lm(ln_USV ~ CONREV +
                  coop +
                  o_coop +
                  pvp +
-                 plf_pc +
+                 PLF_PC +
                  ESRB_RP +
                  ESRB_E +
                  ESRB_T
@@ -116,7 +116,7 @@ linmod_2 <- lm(ln_USV ~ CONREV +
                  coop +
                  o_coop +
                  pvp +
-                 plf_pc +
+                 PLF_PC +
                  ESRB_RP +
                  ESRB_E +
                  ESRB_T +
@@ -151,7 +151,7 @@ lin_mod_3 <- lm(ln_USV ~ (CONREV * FRANC) +
                   (CONREV * coop) +
                   (CONREV * o_coop) +
                   (CONREV * pvp) +
-                  (CONREV * plf_pc) +
+                  (CONREV * PLF_PC) +
                   (CONREV * ESRB_RP) +
                   (CONREV * ESRB_E) +
                   (CONREV * ESRB_T) +
@@ -170,7 +170,7 @@ lin_mod_3 <- lm(ln_USV ~ (CONREV * FRANC) +
                   (PROFREV * coop) +
                   (PROFREV * o_coop) +
                   (PROFREV * pvp) +
-                  (PROFREV * plf_pc) +
+                  (PROFREV * PLF_PC) +
                   (PROFREV * ESRB_RP) +
                   (PROFREV * ESRB_E) +
                   (PROFREV * ESRB_T) +
@@ -200,7 +200,7 @@ wls_mod_2 <- lm(ln_USV ~ CONREV +
                   coop +
                   o_coop +
                   pvp +
-                  plf_pc +
+                  PLF_PC +
                   ESRB_RP +
                   ESRB_E +
                   ESRB_T +
@@ -238,7 +238,7 @@ wls_mod_3 <- lm(ln_USV ~ (CONREV * FRANC) +
                  (CONREV * coop) +
                  (CONREV * o_coop) +
                  (CONREV * pvp) +
-                 (CONREV * plf_pc) +
+                 (CONREV * PLF_PC) +
                  (CONREV * ESRB_RP) +
                  (CONREV * ESRB_E) +
                  (CONREV * ESRB_T) +
@@ -257,7 +257,7 @@ wls_mod_3 <- lm(ln_USV ~ (CONREV * FRANC) +
                  (PROFREV * coop) +
                  (PROFREV * o_coop) +
                  (PROFREV * pvp) +
-                 (PROFREV * plf_pc) +
+                 (PROFREV * PLF_PC) +
                  (PROFREV * ESRB_RP) +
                  (PROFREV * ESRB_E) +
                  (PROFREV * ESRB_T) +
@@ -301,7 +301,7 @@ stargazer(models,
 ################### 2SLS REGRESSION TEST ######################################
 ###############################################################################
 
-instr_var <- cbind(vg_data_test$plf_pc)
+instr_var <- cbind(vg_data_test$PLF_PC)
 endo_var <- cbind(vg_data_test$CONREV, vg_data_test$PROFREV)
 exo_var <- cbind(vg_data_test$FRANC, vg_data_test$GEN_AD, vg_data_test$GEN_RA, vg_data_test$GEN_RP, vg_data_test$GEN_SI, vg_data_test$GEN_SP, vg_data_test$GEN_SI, vg_data_test$GEN_MO, vg_data_test$GEN_MI, vg_data_test$OPUSD, vg_data_test$singleplayer, vg_data_test$multiplayer, vg_data_test$coop, vg_data_test$o_coop, vg_data_test$pvp, vg_data_test$ESRB_RP, vg_data_test$ESRB_E, vg_data_test$ESRB_T, covariates)
 
@@ -355,7 +355,7 @@ ols_test_1 <- lm(CONREV ~ PROFREV +
                    ESRB_RP +
                    ESRB_E +
                    ESRB_T +
-                   plf_pc +
+                   PLF_PC +
                    covariates,
                  data=vg_data_test, na.action = na.omit)
 
@@ -381,7 +381,7 @@ ols_test_2 <- lm(PROFREV ~ CONREV +
                    ESRB_RP +
                    ESRB_E +
                    ESRB_T +
-                   plf_pc +
+                   PLF_PC +
                    covariates,
                  data=vg_data_test, na.action = na.omit)
 
@@ -444,7 +444,7 @@ test_wls_mod_1 <- lm(ln_USV ~ (CONREV * FRANC) +
                        (CONREV * coop) +
                        (CONREV * o_coop) +
                        (CONREV * pvp) +
-                       (CONREV * plf_pc) +
+                       (CONREV * PLF_PC) +
                        (CONREV * ESRB_RP) +
                        (CONREV * ESRB_E) +
                        (CONREV * ESRB_T) +
@@ -463,7 +463,7 @@ test_wls_mod_1 <- lm(ln_USV ~ (CONREV * FRANC) +
                        (PROFREV * coop) +
                        (PROFREV * o_coop) +
                        (PROFREV * pvp) +
-                       (PROFREV * plf_pc) +
+                       (PROFREV * PLF_PC) +
                        (PROFREV * ESRB_RP) +
                        (PROFREV * ESRB_E) +
                        (PROFREV * ESRB_T) +
@@ -515,7 +515,7 @@ out_linmod_1 <- lm(ln_USV ~ CONREV +
                  coop +
                  o_coop +
                  pvp +
-                 plf_pc +
+                 PLF_PC +
                  ESRB_RP +
                  ESRB_E +
                  ESRB_T
@@ -548,7 +548,7 @@ out_linmod_2 <- lm(ln_USV ~ CONREV +
                  coop +
                  o_coop +
                  pvp +
-                 plf_pc +
+                 PLF_PC +
                  ESRB_RP +
                  ESRB_E +
                  ESRB_T +
@@ -582,7 +582,7 @@ out_wls_mod_2 <- lm(ln_USV ~ CONREV +
                   coop +
                   o_coop +
                   pvp +
-                  plf_pc +
+                  PLF_PC +
                   ESRB_RP +
                   ESRB_E +
                   ESRB_T +
@@ -613,7 +613,7 @@ out_wls_mod_3 <- lm(ln_USV ~ (CONREV * FRANC) +
                   (CONREV * coop) +
                   (CONREV * o_coop) +
                   (CONREV * pvp) +
-                  (CONREV * plf_pc) +
+                  (CONREV * PLF_PC) +
                   (CONREV * ESRB_RP) +
                   (CONREV * ESRB_E) +
                   (CONREV * ESRB_T) +
@@ -632,7 +632,7 @@ out_wls_mod_3 <- lm(ln_USV ~ (CONREV * FRANC) +
                   (PROFREV * coop) +
                   (PROFREV * o_coop) +
                   (PROFREV * pvp) +
-                  (PROFREV * plf_pc) +
+                  (PROFREV * PLF_PC) +
                   (PROFREV * ESRB_RP) +
                   (PROFREV * ESRB_E) +
                   (PROFREV * ESRB_T) +
