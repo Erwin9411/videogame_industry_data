@@ -113,53 +113,6 @@ df_char2$presence <- as.numeric((df_char2$presence))
 ####### SEARCHING AND MATCHING PLATFORM NAMES #####################
 ###################################################################
  
-# # Search for unique platforms and rename to make them matching (ps4 = PlayStation 4)
-# 
-# char2_platforms <- as.data.frame(unique(df_char2$platform))
-# sales_platforms <- as.data.frame(unique(df_sales$platform))
-# 
-# char2_platforms <- char2_platforms %>% 
-#   rename("platform" = "unique(df_char2$platform)")
-# 
-# sales_platforms <- sales_platforms %>% 
-#   rename("platform" = "unique(df_sales$platform)")
-# 
-# df_platforms <- rbind(char2_platforms, sales_platforms)
-# 
-# df_platforms <- distinct(df_platforms)
-# 
-# # Renaming platforms
-# df_platforms$platform <- gsub('PSN', 'PlayStation Network ', df_platforms$platform)
-# df_platforms$platform <- gsub('PSP', 'PlayStation Portable', df_platforms$platform)
-# df_platforms$platform <- gsub('PS', 'PlayStation ', df_platforms$platform)
-# df_platforms$platform <- gsub('X360', 'Xbox 360', df_platforms$platform)
-# df_platforms$platform <- gsub('XOne', 'Xbox One', df_platforms$platform)
-# df_platforms$platform <- gsub('XBL', 'Xbox Live', df_platforms$platform)
-# df_platforms$platform <- gsub('XB', 'Xbox', df_platforms$platform)
-# df_platforms$platform <- gsub('WiiU', 'Wii U', df_platforms$platform)
-# df_platforms$platform <- gsub('GG', 'Game Gear', df_platforms$platform)
-# #df_platforms$platform <- gsub('PlayStation V', 'PlayStation 5', df_platforms$platform)
-# df_platforms$platform <- gsub('GBA', 'Game Boy Advance', df_platforms$platform)
-# df_platforms$platform <- gsub('GBC', 'Game Boy Color', df_platforms$platform)
-# df_platforms$platform <- gsub('GB', 'Game Boy', df_platforms$platform)
-# df_platforms$platform <- gsub('GC', 'GameCube', df_platforms$platform)
-# df_platforms$platform <- gsub('SAT', 'SEGA Saturn', df_platforms$platform)
-# # df_platforms$platform <- gsub('NGage', 'N Gage', df_platforms$platform)
-# # df_platforms$platform <- gsub('NG', 'N Gage', df_platforms$platform)
-# # df_platforms$platform <- gsub('N Gage', 'NGage', df_platforms$platform)
-# df_platforms$platform <- gsub('DSiW', 'Nintendo DSIW', df_platforms$platform)
-# df_platforms$platform <- gsub('Nintendo DSi', 'Nintendo DESi', df_platforms$platform)
-# df_platforms$platform <- gsub('DSi', 'Nintendo DESi', df_platforms$platform)
-# df_platforms$platform <- gsub('Nintendo DESi', 'Nintendo DSi', df_platforms$platform)
-# df_platforms$platform <- gsub('Nintendo DSIW', 'DSiW', df_platforms$platform)
-# df_platforms$platform <- gsub('GEN', 'Genesis', df_platforms$platform)
-# df_platforms$platform <- gsub('SCD', 'SEGA CD', df_platforms$platform)
-# # df_platforms$platform <- gsub(' Lynx', 'Lynx', df_platforms$platform)
-# # df_platforms$platform <- gsub('AtariLynx', 'Lynx', df_platforms$platform)
-# df_platforms$platform <- gsub('Lynx', 'Atari Lynx', df_platforms$platform)
-# df_platforms$platform <- gsub('ApII', 'Apple II', df_platforms$platform)
-# df_platforms$platform <- gsub('N64', 'Nintendo 64', df_platforms$platform)
- 
 # Renaming platforms
 
 # Renaming platforms in df_char2
@@ -195,29 +148,6 @@ df_sales$platform <- gsub('^GC$', 'GameCube', df_sales$platform)
 df_sales$platform <- gsub('^SAT$', 'SEGA Saturn', df_sales$platform)
 df_sales$platform <- str_trim(df_sales$platform)
 
-##############################################################
-############### CONTROL PLATFORMS   ##########################
-##############################################################
-
-
-# Search for unique platforms and rename to make them matching (ps4 = PlayStation 4)
-# 
-# char2_platforms <- as.data.frame(unique(df_char2$platform))
-# sales_platforms <- as.data.frame(unique(df_sales$platform))
-# 
-# char2_platforms <- char2_platforms %>% 
-#   rename("platform" = "unique(df_char2$platform)")
-# 
-# sales_platforms <- sales_platforms %>% 
-#   rename("platform" = "unique(df_sales$platform)")
-# 
-# df_platforms <- rbind(char2_platforms, sales_platforms)
-# 
-# df_platforms <- distinct(df_platforms)
-# 
-# 
-# df_platforms$platform <- str_trim(df_platforms$platform)
-# df_platforms <- distinct(df_platforms)
 
 ##############################################################################
 ############ cOMBINE SALES AND CHARACTERISTICS DATASETS ######################
@@ -229,18 +159,6 @@ df_sales$name <- str_trim(df_sales$name)
 df_combined <- df_char2 %>% 
   inner_join(df_sales, by = c("name", "platform"))
 
-###############################################################################
-##################### COMPILE TRIMMED DATASET #################################
-###############################################################################
-
-# df_com_trimmed <- df_combined %>% 
-#   select(name, genres, indie, presence, platform, ratingsbreakdown, releasedate, soundtrack, franchise, originalcost, players, esrb, publisher.y, global_sales) %>% 
-#   rename(global_sales_m = global_sales,
-#          publisher = publisher.y)
-#   
-# df_com_trimmed <- df_com_trimmed %>% 
-#   filter(global_sales_m != 'N/A') %>% 
-#   filter(global_sales_m != '0.00')
 
 ##############################################################################
 ########### INCORPORATE CRITIC AND USER SCORE ###############################
@@ -266,7 +184,7 @@ df_combined_user_score <- df_combined %>%
 # Filter out and remove observation with no global sales
 df_user_score_trimmed <- df_combined_user_score %>% 
   filter(global_sales_m != 'N/A') %>% 
-  filter(global_sales_m != '0.00')
+  filter(global_sales_m != 0.00)
 
 df_user_score_trimmed <- df_user_score_trimmed[!duplicated(df_user_score_trimmed[c("name","platform")]),]
 
@@ -283,98 +201,8 @@ df_games_complete$franchise <- ifelse(df_games_complete$franchise == "", 0, 1)
 # Dummy creation for esrb rating
 df_games_complete$esrb_everyone <- ifelse(df_games_complete$meta_esrb == "E10+", 1, ifelse(df_games_complete$meta_esrb == "E", 1, 0))
 df_games_complete$esrb_teens <- ifelse(df_games_complete$meta_esrb == "T", 1, 0)
-df_games_complete$esrb_adults <- ifelse(df_games_complete$meta_esrb == "AO", 1, ifelse(df_games_complete$meta_esrb == "M", 1, 0))
+# df_games_complete$esrb_adults <- ifelse(df_games_complete$meta_esrb == "AO", 1, ifelse(df_games_complete$meta_esrb == "M", 1, 0))
 df_games_complete$esrb_pending <- ifelse(df_games_complete$meta_esrb == "RP", 1, 0)
-
-###############################################################################
-######################## CREATING DUMMIES FOR PLAYERS #########################
-###############################################################################
-
-# # Separate the players options into separate columns
-# df_games_complete <- df_games_complete %>% 
-#   separate(players, c("players1", "players2", "players3", "players4", "players5"), sep = ",")
-# 
-# # Removing spaces
-# df_games_complete$players2 <- str_replace_all(df_games_complete$players2, " ", "")
-# df_games_complete$players3 <- str_replace_all(df_games_complete$players3, " ", "")
-# df_games_complete$players4 <- str_replace_all(df_games_complete$players4, " ", "")
-# df_games_complete$players5 <- str_replace_all(df_games_complete$players5, " ", "")
-# 
-# # Create dummies for singleplayer
-# df_games_complete$players1_si <- ifelse(df_games_complete$players1 == "singleplayer", 1, 0)
-# df_games_complete$players2_si <- ifelse(df_games_complete$players2 == "singleplayer", 1, 0)
-# df_games_complete$players3_si <- ifelse(df_games_complete$players3 == "singleplayer", 1, 0)
-# df_games_complete$players4_si <- ifelse(df_games_complete$players4 == "singleplayer", 1, 0)
-# df_games_complete$players5_si <- ifelse(df_games_complete$players5 == "singleplayer", 1, 0)
-# 
-# # Combining the singleplayers dummies into one column
-# df_games_complete$singleplayer <- ifelse(df_games_complete$players1_si | df_games_complete$players2_si | df_games_complete$players3_si | df_games_complete$players4_si | df_games_complete$players5_si == "1", 1, 0)
-# 
-# # Create dummies for multiplayer
-# df_games_complete$players1_mp <- ifelse(df_games_complete$players1 == "multiplayer", 1, 0)
-# df_games_complete$players2_mp <- ifelse(df_games_complete$players2 == "multiplayer", 1, 0)
-# df_games_complete$players3_mp <- ifelse(df_games_complete$players3 == "multiplayer", 1, 0)
-# df_games_complete$players4_mp <- ifelse(df_games_complete$players4 == "multiplayer", 1, 0)
-# df_games_complete$players5_mp <- ifelse(df_games_complete$players5 == "multiplayer", 1, 0)
-# 
-# # Combining the multiplayers dummies into one column
-# df_games_complete$multiplayer <- ifelse(df_games_complete$players1_mp | df_games_complete$players2_mp | df_games_complete$players3_mp | df_games_complete$players4_mp | df_games_complete$players5_mp == "1", 1, 0)
-# 
-# # Create dummies for coop
-# df_games_complete$players1_co <- ifelse(df_games_complete$players1 == "coop", 1, 0)
-# df_games_complete$players2_co <- ifelse(df_games_complete$players2 == "coop", 1, 0)
-# df_games_complete$players3_co <- ifelse(df_games_complete$players3 == "coop", 1, 0)
-# df_games_complete$players4_co <- ifelse(df_games_complete$players4 == "coop", 1, 0)
-# df_games_complete$players5_co <- ifelse(df_games_complete$players5 == "coop", 1, 0)
-# 
-# # Combining the coop dummies into one column
-# df_games_complete$coop <- ifelse(df_games_complete$players1_co | df_games_complete$players2_co | df_games_complete$players3_co | df_games_complete$players4_co | df_games_complete$players5_co == "1", 1, 0)
-# 
-# # Create dummies for online coop
-# df_games_complete$players1_oc <- ifelse(df_games_complete$players1 == "online coop", 1, 0)
-# df_games_complete$players2_oc <- ifelse(df_games_complete$players2 == "online coop", 1, 0)
-# df_games_complete$players3_oc <- ifelse(df_games_complete$players3 == "online coop", 1, 0)
-# df_games_complete$players4_oc <- ifelse(df_games_complete$players4 == "online coop", 1, 0)
-# df_games_complete$players5_oc <- ifelse(df_games_complete$players5 == "online coop", 1, 0)
-# 
-# # Combining the online coop dummies into one column
-# df_games_complete$o_coop <- ifelse(df_games_complete$players1_co | df_games_complete$players2_co | df_games_complete$players3_co | df_games_complete$players4_co | df_games_complete$players5_co == "1", 1, 0)
-# 
-# # Create dummies for pvp
-# df_games_complete$players1_pvp <- ifelse(df_games_complete$players1 == "pvp", 1, 0)
-# df_games_complete$players2_pvp <- ifelse(df_games_complete$players2 == "pvp", 1, 0)
-# df_games_complete$players3_pvp <- ifelse(df_games_complete$players3 == "pvp", 1, 0)
-# df_games_complete$players4_pvp <- ifelse(df_games_complete$players4 == "pvp", 1, 0)
-# df_games_complete$players5_pvp <- ifelse(df_games_complete$players5 == "pvp", 1, 0)
-# 
-# # Combining the pvp dummies into one column
-# df_games_complete$pvp <- ifelse(df_games_complete$players1_pvp | df_games_complete$players2_pvp | df_games_complete$players3_pvp | df_games_complete$players4_pvp | df_games_complete$players5_pvp == "1", 1, 0)
-# 
-# 
-# # Remove obsolete column which were use for creating dummies
-# df_games_complete <- df_games_complete %>% 
-#   select(-c("players1_si", "players2_si", "players4_si", "players3_si", "players5_si", 
-#             "players5_mp", "players4_mp", "players3_mp", "players2_mp", "players1_mp", 
-#             "players5_co", "players4_co", "players3_co", "players2_co", "players1_co",
-#             "players5_oc", "players4_oc", "players3_oc", "players2_oc", "players1_oc",
-#             "players5_pvp", "players4_pvp", "players3_pvp", "players2_pvp", "players1_pvp",
-#             "players5", "players4", "players3", "players2", "players1"))
-# 
-# # Replace na with zeros for each of the player options
-# df_games_complete$singleplayer <- df_games_complete$singleplayer %>% 
-#   replace_na(0)
-# 
-# df_games_complete$multiplayer <- df_games_complete$multiplayer %>% 
-#   replace_na(0)
-# 
-# df_games_complete$coop <- df_games_complete$coop %>% 
-#   replace_na(0)
-# 
-# df_games_complete$o_coop <- df_games_complete$o_coop %>% 
-#   replace_na(0)
-# 
-# df_games_complete$pvp <- df_games_complete$pvp %>% 
-#   replace_na(0)
 
 
 ###############################################################################
@@ -383,7 +211,7 @@ df_games_complete$esrb_pending <- ifelse(df_games_complete$meta_esrb == "RP", 1,
 
 # Separate the players options into separate columns
 df_games_complete <- df_games_complete %>% 
-  separate(players, c("players1", "players2", "players3", "players4", "players5"), sep = ",")
+  separate(players, c("players1", "players2", "players3", "players4", "players5"), sep = ",", remove = FALSE)
 
 # Removing spaces
 df_games_complete$players2 <- str_replace_all(df_games_complete$players2, " ", "")
@@ -421,36 +249,35 @@ df_games_complete$players5_co <- ifelse(df_games_complete$players5 == "coop", 1,
 # Combining the coop dummies into one column
 df_games_complete$coop <- ifelse(df_games_complete$players1_co | df_games_complete$players2_co | df_games_complete$players3_co | df_games_complete$players4_co | df_games_complete$players5_co == "1", 1, 0)
 
-# # Create dummies for online coop
-# df_games_complete$players1_oc <- ifelse(df_games_complete$players1 == "online coop", 1, 0)
-# df_games_complete$players2_oc <- ifelse(df_games_complete$players2 == "online coop", 1, 0)
-# df_games_complete$players3_oc <- ifelse(df_games_complete$players3 == "online coop", 1, 0)
-# df_games_complete$players4_oc <- ifelse(df_games_complete$players4 == "online coop", 1, 0)
-# df_games_complete$players5_oc <- ifelse(df_games_complete$players5 == "online coop", 1, 0)
-# 
-# # Combining the online coop dummies into one column
-# df_games_complete$o_coop <- ifelse(df_games_complete$players1_co | df_games_complete$players2_co | df_games_complete$players3_co | df_games_complete$players4_co | df_games_complete$players5_co == "1", 1, 0)
-# 
-# # Create dummies for pvp
-# df_games_complete$players1_pvp <- ifelse(df_games_complete$players1 == "pvp", 1, 0)
-# df_games_complete$players2_pvp <- ifelse(df_games_complete$players2 == "pvp", 1, 0)
-# df_games_complete$players3_pvp <- ifelse(df_games_complete$players3 == "pvp", 1, 0)
-# df_games_complete$players4_pvp <- ifelse(df_games_complete$players4 == "pvp", 1, 0)
-# df_games_complete$players5_pvp <- ifelse(df_games_complete$players5 == "pvp", 1, 0)
-# 
-# # Combining the pvp dummies into one column
-# df_games_complete$pvp <- ifelse(df_games_complete$players1_pvp | df_games_complete$players2_pvp | df_games_complete$players3_pvp | df_games_complete$players4_pvp | df_games_complete$players5_pvp == "1", 1, 0)
+# Create dummies for online coop
+df_games_complete$players1_oc <- ifelse(df_games_complete$players1 == "onlinecoop", 1, 0)
+df_games_complete$players2_oc <- ifelse(df_games_complete$players2 == "onlinecoop", 1, 0)
+df_games_complete$players3_oc <- ifelse(df_games_complete$players3 == "onlinecoop", 1, 0)
+df_games_complete$players4_oc <- ifelse(df_games_complete$players4 == "onlinecoop", 1, 0)
+df_games_complete$players5_oc <- ifelse(df_games_complete$players5 == "onlinecoop", 1, 0)
+
+# Combining the online coop dummies into one column
+df_games_complete$o_coop <- ifelse(df_games_complete$players1_oc | df_games_complete$players2_oc | df_games_complete$players3_oc | df_games_complete$players4_oc | df_games_complete$players5_oc == "1", 1, 0)
+
+# Create dummies for pvp
+df_games_complete$players1_pvp <- ifelse(df_games_complete$players1 == "pvp", 1, 0)
+df_games_complete$players2_pvp <- ifelse(df_games_complete$players2 == "pvp", 1, 0)
+df_games_complete$players3_pvp <- ifelse(df_games_complete$players3 == "pvp", 1, 0)
+df_games_complete$players4_pvp <- ifelse(df_games_complete$players4 == "pvp", 1, 0)
+df_games_complete$players5_pvp <- ifelse(df_games_complete$players5 == "pvp", 1, 0)
+
+# Combining the pvp dummies into one column
+df_games_complete$pvp <- ifelse(df_games_complete$players1_pvp | df_games_complete$players2_pvp | df_games_complete$players3_pvp | df_games_complete$players4_pvp | df_games_complete$players5_pvp == "1", 1, 0)
 
 
 # Remove obsolete column which were use for creating dummies
 df_games_complete <- df_games_complete %>% 
-  select(-c("players1_si", "players2_si", "players4_si", "players3_si", "players5_si", 
-            "players5_mp", "players4_mp", "players3_mp", "players2_mp", "players1_mp", 
-            "players5_co", "players4_co", "players3_co", "players2_co", "players1_co",
+  select(-c("players1_si","players2_si", "players3_si", "players4_si", "players5_si", "players5_mp", "players4_mp", "players3_mp", "players2_mp", "players1_mp", 
+            "players5_co", "players4_co", "players3_co", "players2_co", "players1_co","players1_oc","players2_oc", "players3_oc", "players4_oc", "players5_oc", "players1_pvp","players2_pvp", "players3_pvp", "players4_pvp", "players5_pvp",
             "players5", "players4", "players3", "players2", "players1"))
 
 # Replace na with zeros for each of the player options
-df_games_complete$singleplayer <- df_games_complete$singleplayer %>% 
+df_games_complete$singleplayer <- df_games_complete$singleplayer %>%
   replace_na(0)
 
 df_games_complete$multiplayer <- df_games_complete$multiplayer %>% 
@@ -459,11 +286,11 @@ df_games_complete$multiplayer <- df_games_complete$multiplayer %>%
 df_games_complete$coop <- df_games_complete$coop %>% 
   replace_na(0)
 
-# df_games_complete$o_coop <- df_games_complete$o_coop %>% 
-#   replace_na(0)
-# 
-# df_games_complete$pvp <- df_games_complete$pvp %>% 
-#   replace_na(0)
+df_games_complete$o_coop <- df_games_complete$o_coop %>%
+  replace_na(0)
+
+df_games_complete$pvp <- df_games_complete$pvp %>%
+  replace_na(0)
 
 #############################################################################
 ################### DATA PREP ORIGINIAL COSTS ###############################
@@ -495,12 +322,6 @@ num_pub <- unique_pub %>%
   group_by(publisher) %>% 
   summarize(num_g_pub=n())
 
-# Creating dummies for small, medium or large publishers based on the number of published games
-# dum_pub <- num_pub %>%   
-#   mutate(small_pub = ifelse(num_pub$count <= 5, 1, 0)) %>% 
-#   mutate(medium_pub = ifelse(num_pub$count >5 & num_pub$count <15,1,0)) %>% 
-#   mutate(large_pub = ifelse(num_pub$count >= 15, 1, 0)) %>% 
-#   select(-count)
 
 # Adding the publisher dummies to the df_games_complete dataset
 df_games_complete <- df_games_complete %>% 
@@ -518,11 +339,8 @@ df_games_complete$num_languages <- as.numeric(df_games_complete$num_languages)
 ################################ GENRE ######################################
 #############################################################################
 
-## Search for all unique genres
-#unique_genre <- as.data.frame(unique(df_games_complete$game_genre))
-
 # Creating dummies for genres
-df_games_complete$gen_action <- ifelse(df_games_complete$game_genre == "Action", 1, ifelse(df_games_complete$game_genre == "Shooter", 1, ifelse(df_games_complete$game_genre == "Platform", 1, ifelse(df_games_complete$game_genre == "Action-Adventure", 1, ifelse(df_games_complete$game_genre == "Fighting", 1,0)))))
+# df_games_complete$gen_action <- ifelse(df_games_complete$game_genre == "Action", 1, ifelse(df_games_complete$game_genre == "Shooter", 1, ifelse(df_games_complete$game_genre == "Platform", 1, ifelse(df_games_complete$game_genre == "Action-Adventure", 1, ifelse(df_games_complete$game_genre == "Fighting", 1,0)))))
 df_games_complete$gen_adventure <- ifelse(df_games_complete$game_genre == "Adventure", 1, ifelse(df_games_complete$game_genre == "Visual+Novel", 1, 0))
 df_games_complete$gen_racing <- ifelse(df_games_complete$game_genre == "Racing", 1,0)
 df_games_complete$gen_roleplaying <- ifelse(df_games_complete$game_genre == "Role-Playing", 1,0)
@@ -539,17 +357,17 @@ df_games_complete$gen_mmo <- ifelse(df_games_complete$game_genre == "MMO", 1,0)
 # unique_platform <- as.data.frame((unique(df_games_complete$platform)))
 
 df_games_complete$plf_pc <- ifelse(df_games_complete$platform == "PC", 1, 0)
-df_games_complete$plf_con <- ifelse(df_games_complete$platform != "PC", 1,0)
+# df_games_complete$plf_con <- ifelse(df_games_complete$platform != "PC", 1,0)
 
 df_games_complete$plf_pc <- as.numeric(df_games_complete$plf_pc)
-df_games_complete$plf_con <- as.numeric(df_games_complete$plf_con)
+# df_games_complete$plf_con <- as.numeric(df_games_complete$plf_con)
 
 ###############################################################################
 ####################### RE-ORDER, SAVING AND WRITING CSV ######################
 ###############################################################################
 
 # Re-order the dataset
-fin_games_dataset <- df_games_complete[,c("name", "global_sales_m", "na_sales_m", "eu_sales_m", "jp_sales_m", "other_sales_m", "meta_critic_score", "meta_user_score", "platform", "plf_con", "plf_pc", "publisher", "developer", "num_g_pub", "game_genre", "gen_action", "gen_adventure", "gen_racing", "gen_roleplaying", "gen_simulation", "gen_sports", "gen_strategy", "gen_mmo", "gen_misc", "franchise", "originalcost_$", "meta_release_date", "singleplayer", "multiplayer", "coop", "controller", "meta_esrb", "esrb_everyone", "esrb_teens", "esrb_adults", "esrb_pending", "indie", "soundtrack", "presence", "languages", "num_languages")]
+fin_games_dataset <- df_games_complete[,c("name", "global_sales_m", "na_sales_m", "eu_sales_m", "jp_sales_m", "other_sales_m", "meta_user_score", "meta_critic_score",  "platform", "plf_pc", "publisher", "developer", "num_g_pub", "game_genre", "gen_adventure", "gen_racing", "gen_roleplaying", "gen_simulation", "gen_sports", "gen_strategy", "gen_mmo", "gen_misc", "franchise", "originalcost_$", "meta_release_date","players", "singleplayer", "multiplayer", "coop", "o_coop", "pvp", "controller", "meta_esrb", "esrb_everyone", "esrb_teens", "esrb_pending", "indie", "soundtrack", "presence", "languages", "num_languages")]
 
 # Read platform release dates dataset
 platform_year <- read.xlsx("../data/platform_release_dates.xlsx", sheet = 1, startRow = 1, colNames = TRUE,
@@ -571,7 +389,7 @@ fin_games_dataset$release_diff_days <- as.numeric(fin_games_dataset$release_diff
 fin_games_dataset$release_diff_days <- ifelse(fin_games_dataset$release_diff_days < 0, "0", fin_games_dataset$release_diff_days)
 
 fin_games_dataset$num_g_pub <- as.numeric(fin_games_dataset$num_g_pub)
-fin_games_dataset$gen_action <- as.numeric(fin_games_dataset$gen_action)
+# fin_games_dataset$gen_action <- as.numeric(fin_games_dataset$gen_action)
 fin_games_dataset$gen_adventure <- as.numeric(fin_games_dataset$gen_adventure)
 fin_games_dataset$gen_racing <- as.numeric(fin_games_dataset$gen_racing)
 fin_games_dataset$gen_roleplaying <- as.numeric(fin_games_dataset$gen_roleplaying)
@@ -581,7 +399,7 @@ fin_games_dataset$gen_strategy <- as.numeric(fin_games_dataset$gen_strategy)
 fin_games_dataset$gen_mmo <- as.numeric(fin_games_dataset$gen_mmo)
 fin_games_dataset$gen_misc <- as.numeric(fin_games_dataset$gen_misc)
 fin_games_dataset$`originalcost_$` <- as.numeric(fin_games_dataset$`originalcost_$`)
-fin_games_dataset$singleplayer <- as.numeric(fin_games_dataset$singleplayer)
+# fin_games_dataset$singleplayer <- as.numeric(fin_games_dataset$singleplayer)
 fin_games_dataset$multiplayer <- as.numeric(fin_games_dataset$multiplayer)
 fin_games_dataset$coop <- as.numeric(fin_games_dataset$coop)
 # fin_games_dataset$o_coop <- as.numeric(fin_games_dataset$o_coop)
@@ -589,7 +407,7 @@ fin_games_dataset$coop <- as.numeric(fin_games_dataset$coop)
 fin_games_dataset$controller <- as.numeric(fin_games_dataset$controller)
 fin_games_dataset$esrb_everyone <- as.numeric(fin_games_dataset$esrb_everyone)
 fin_games_dataset$esrb_teens <- as.numeric(fin_games_dataset$esrb_teens) 
-fin_games_dataset$esrb_adults <- as.numeric(fin_games_dataset$esrb_adults)
+# fin_games_dataset$esrb_adults <- as.numeric(fin_games_dataset$esrb_adults)
 fin_games_dataset$esrb_pending <- as.numeric(fin_games_dataset$esrb_pending)
 fin_games_dataset$indie <- as.numeric(fin_games_dataset$indie)
 fin_games_dataset$soundtrack <- as.numeric(fin_games_dataset$soundtrack)
@@ -597,29 +415,30 @@ fin_games_dataset$presence <- as.numeric(fin_games_dataset$presence)
 fin_games_dataset$num_languages <- as.numeric(fin_games_dataset$num_languages)
 fin_games_dataset$release_diff_days <- as.numeric(fin_games_dataset$release_diff_days)
 
-
+vg_data <- fin_games_dataset %>% 
+  rename(USV = global_sales_m,
+         CONREV = meta_user_score,
+         PROFREV = meta_critic_score,
+         GEN_AD = gen_adventure,
+         GEN_RA = gen_racing,
+         GEN_RP = gen_roleplaying,
+         GEN_SI = gen_simulation,
+         GEN_SP = gen_sports,
+         GEN_ST = gen_strategy,
+         GEN_MO = gen_mmo,
+         GEN_MI = gen_misc,
+         OPUSD = "originalcost_$",
+         FRANC = franchise,
+         ESRB_RP = esrb_pending,
+         ESRB_E = esrb_everyone,
+         ESRB_T = esrb_teens,
+         PUBS = num_g_pub,
+         LCP = release_diff_days,
+         N_LAN = num_languages,
+         INDIE = indie,
+         SMPRES = presence,
+         PLF_PC = plf_pc)
+  
  
 
-write.csv(fin_games_dataset, "../gen/full_videogame_dataset.csv", row.names = FALSE)
-
-#################################################################################
-############################ DESCRIPTIVE STATISTICS #############################
-#################################################################################
-
-summary(fin_games_dataset$global_sales_m)
-
-summary(fin_games_dataset$meta_critic_score)
-
-summary(fin_games_dataset$meta_user_score)
-
-summary(fin_games_dataset$`originalcost_$`)
-
-summary(fin_games_dataset$meta_release_date)
-
-unique_platform <- fin_games_dataset %>% 
-  distinct(platform, .keep_all = TRUE)
-
-#################################################################################
-############################ REGRESSION ANALYSES ################################
-#################################################################################
-
+write.csv(vg_data, "../gen/full_videogame_dataset.csv", row.names = FALSE)
