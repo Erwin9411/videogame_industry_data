@@ -96,7 +96,7 @@ tidy_linmod_1
 ################### INCL CONTROL VARIABLES ####################################
 ###############################################################################
 
-covariates <- cbind(vg_data_test$INDIE, vg_data_test$soundtrack, vg_data_test$SMPRES, vg_data_test$N_LAN, vg_data_test$LCP)
+covariates <- cbind(vg_data_test$PUBS, vg_data_test$INDIE, vg_data_test$soundtrack, vg_data_test$SMPRES, vg_data_test$N_LAN, vg_data_test$LCP)
 
 # Linear regression including control variables
 linmod_2 <- lm(ln_USV ~ CONREV + 
@@ -528,7 +528,7 @@ summary_out_linmod_1
 ################### INCL CONTROL VARIABLES ####################################
 ###############################################################################
 
-out_covariates <- cbind(out_test$INDIE, out_test$soundtrack, out_test$SMPRES, out_test$N_LAN, out_test$LCP)
+out_covariates <- cbind(out_test$PUBS, out_test$INDIE, out_test$soundtrack, out_test$SMPRES, out_test$N_LAN, out_test$LCP)
 
 # Linear regression including control variables
 out_linmod_2 <- lm(ln_USV ~ CONREV + 
