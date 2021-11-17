@@ -18,8 +18,7 @@ vg_data <- read.csv("../gen/full_videogame_dataset.csv")
 vg_data <- vg_data %>% 
   mutate(ln_USV = log(USV))
 
-vg_data_test <- vg_data %>% 
-  select(-c(na_sales_m, eu_sales_m, jp_sales_m, other_sales_m)) 
+vg_data_test <- vg_data 
   
 vg_data_test <- drop_na(vg_data_test)
 

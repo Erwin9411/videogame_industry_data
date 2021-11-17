@@ -354,8 +354,6 @@ df_games_complete$gen_mmo <- ifelse(df_games_complete$game_genre == "MMO", 1,0)
 ####################### CREATE PLATFORM DUMMIES ###############################
 ###############################################################################
 
-# unique_platform <- as.data.frame((unique(df_games_complete$platform)))
-
 df_games_complete$plf_pc <- ifelse(df_games_complete$platform == "PC", 1, 0)
 # df_games_complete$plf_con <- ifelse(df_games_complete$platform != "PC", 1,0)
 
@@ -367,7 +365,7 @@ df_games_complete$plf_pc <- as.numeric(df_games_complete$plf_pc)
 ###############################################################################
 
 # Re-order the dataset
-fin_games_dataset <- df_games_complete[,c("name", "global_sales_m", "na_sales_m", "eu_sales_m", "jp_sales_m", "other_sales_m", "meta_user_score", "meta_critic_score",  "platform", "plf_pc", "publisher", "developer", "num_g_pub", "game_genre", "gen_adventure", "gen_racing", "gen_roleplaying", "gen_simulation", "gen_sports", "gen_strategy", "gen_mmo", "gen_misc", "franchise", "originalcost_$", "meta_release_date","players", "singleplayer", "multiplayer", "coop", "o_coop", "pvp", "controller", "meta_esrb", "esrb_everyone", "esrb_teens", "esrb_pending", "indie", "soundtrack", "presence", "languages", "num_languages")]
+fin_games_dataset <- df_games_complete[,c("name", "global_sales_m", "meta_user_score", "meta_critic_score",  "platform", "plf_pc", "publisher", "developer", "num_g_pub", "game_genre", "gen_adventure", "gen_racing", "gen_roleplaying", "gen_simulation", "gen_sports", "gen_strategy", "gen_mmo", "gen_misc", "franchise", "originalcost_$", "meta_release_date","players", "singleplayer", "multiplayer", "coop", "o_coop", "pvp", "controller", "meta_esrb", "esrb_everyone", "esrb_teens", "esrb_pending", "indie", "soundtrack", "presence", "languages", "num_languages")]
 
 # Read platform release dates dataset
 platform_year <- read.xlsx("../data/platform_release_dates.xlsx", sheet = 1, startRow = 1, colNames = TRUE,
