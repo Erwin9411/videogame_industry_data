@@ -1,6 +1,12 @@
 # Install packages
 # install.packages("AER")
 # install.packages("systemfit")
+# install.packages("moments")
+# install.packages("nortest")
+# install.packages("dgof")
+# install.packages("copula")
+# install.packages("plotly")
+# install.packages("olsrr")
 
 # Loading Packages
 library(readr)
@@ -112,112 +118,55 @@ data_prepped <- data_prepped %>%
          OMUL = OMUL_C,
          SP.MP = SP.MP_C)
 
-
-#################################################################################
-############################ REGRESSION ANALYSES ################################
-#################################################################################
-
-# Linear regression 
-linmod_1 <- lm(ln_USV ~ CONREV + 
-                 PROFREV +
-                 FRANC +
-                 GEN_AD +
-                 GEN_RA +
-                 GEN_RP +
-                 GEN_SI +
-                 GEN_SP +
-                 GEN_ST +
-                 GEN_MO +
-                 GEN_MI +
-                 OPUSD +
-                 singleplayer +
-                 multiplayer +
-                 coop +
-                 o_coop +
-                 pvp +
-                 PLF_PC +
-                 ESRB_RP +
-                 ESRB_E +
-                 ESRB_T
-               ,data=vg_data_test, na.action = na.omit)
-
 ###############################################################################
-################### INCL CONTROL VARIABLES ####################################
+######################## LINEAR REGRESSIONS ###################################
 ###############################################################################
 
-covariates <- cbind(vg_data_test$PUBS, vg_data_test$INDIE, vg_data_test$soundtrack, vg_data_test$SMPRES, vg_data_test$N_LAN, vg_data_test$LCP)
-
-# Linear regression including control variables
-linmod_2 <- lm(ln_USV ~ CONREV + 
+# Linear regression including control variables without copula terms or interactions
+model_1A <- lm(ln_USV ~ CONREV +
                  PROFREV +
                  FRANC +
-                 GEN_AD +
-                 GEN_RA +
-                 GEN_RP +
-                 GEN_SI +
                  GEN_SP +
-                 GEN_ST +
-                 GEN_MO +
+                 GEN_RPG +
                  GEN_MI +
                  OPUSD +
-                 singleplayer +
-                 multiplayer +
-                 coop +
-                 o_coop +
-                 pvp +
+                 OMUL +
+                 SP.MP +
                  PLF_PC +
-                 ESRB_RP +
-                 ESRB_E +
-                 ESRB_T +
-                 covariates,
+                 ESRB_M +
+                 PUBS +
+                 INDIE +
+                 soundtrack +
+                 SMPRES +
+                 N_LAN ,
                data=vg_data_test, na.action = na.omit)
 
 
-###############################################################################
-################### INTERACTION TERMS INCLUDED ################################
-###############################################################################
-
-# Linear regression including interaction terms
-lin_mod_3 <- lm(ln_USV ~ (CONREV * FRANC) +
-                  (CONREV * GEN_AD) +
-                  (CONREV * GEN_RA) +
-                  (CONREV * GEN_RP) +
-                  (CONREV * GEN_SI) +
-                  (CONREV * GEN_SP) +
-                  (CONREV * GEN_ST) +
-                  (CONREV * GEN_MO) +
-                  (CONREV * GEN_MI) +
-                  (CONREV * OPUSD) +
-                  (CONREV * singleplayer) +
-                  (CONREV * multiplayer) +
-                  (CONREV * coop) +
-                  (CONREV * o_coop) +
-                  (CONREV * pvp) +
-                  (CONREV * PLF_PC) +
-                  (CONREV * ESRB_RP) +
-                  (CONREV * ESRB_E) +
-                  (CONREV * ESRB_T) +
-                  (PROFREV * FRANC) +
-                  (PROFREV * GEN_AD) +
-                  (PROFREV * GEN_RA) +
-                  (PROFREV * GEN_RP) +
-                  (PROFREV * GEN_SI) +
-                  (PROFREV * GEN_SP) +
-                  (PROFREV * GEN_ST) +
-                  (PROFREV * GEN_MO) +
-                  (PROFREV * GEN_MI) +
-                  (PROFREV * OPUSD) +
-                  (PROFREV * singleplayer) +
-                  (PROFREV * multiplayer) +
-                  (PROFREV * coop) +
-                  (PROFREV * o_coop) +
-                  (PROFREV * pvp) +
-                  (PROFREV * PLF_PC) +
-                  (PROFREV * ESRB_RP) +
-                  (PROFREV * ESRB_E) +
-                  (PROFREV * ESRB_T) +
-                  covariates,
-                data=vg_data_test, na.action = na.omit)
+# Linear regression including interaction terms without copulas
+model_1B <- lm(ln_USV ~ (CONREV * FRANC) +
+                 (CONREV * GEN_SP) +
+                 (CONREV * GEN_RPG) +
+                 (CONREV * GEN_MI) +
+                 (CONREV * OPUSD) +
+                 (CONREV * OMUL_D) +
+                 (CONREV * SP.MP_D) +
+                 (CONREV * PLF_PC) +
+                 (CONREV * ESRB_M) +
+                 (PROFREV * FRANC) +
+                 (PROFREV * GEN_SP) +
+                 (PROFREV * GEN_RPG) +
+                 (PROFREV * GEN_MI) +
+                 (PROFREV * OPUSD) +
+                 (PROFREV * OMUL_D) +
+                 (PROFREV * SP.MP_D) +
+                 (PROFREV * PLF_PC) +
+                 (PROFREV * ESRB_M)+
+                 PUBS +
+                 INDIE +
+                 soundtrack +
+                 SMPRES +
+                 N_LAN,
+               data=data_prepped, na.action = na.omit)
 
 
 ###############################################################################
@@ -259,53 +208,47 @@ OPUSD_KUR <- print(kurtosis(vg_data_test$OPUSD))
 
 # Checking for normality of the residuals via the untreated model
 
-untreatedModel2 <- summary(lm(ln_USV ~ CONREV + 
+untreatedModel2 <- summary(lm(ln_USV ~ CONREV +
                                 PROFREV +
                                 FRANC +
-                                GEN_C_SP +
-                                GEN_C_MO +
-                                GEN_C_MI +
+                                GEN_SP +
+                                GEN_RPG +
+                                GEN_MI +
                                 OPUSD +
-                                singleplayer +
-                                multiplayer +
-                                coop +
-                                pvp +
+                                OMUL +
+                                SP.MP +
                                 PLF_PC +
                                 ESRB_M +
                                 PUBS +
                                 INDIE +
                                 soundtrack +
                                 SMPRES +
-                                N_LAN,
-                              data=data_prepped, na.action = na.omit))
+                                N_LAN ,
+                              data=vg_data_test, na.action = na.omit))
 
 untreatedModel3 <- summary(lm(ln_USV ~ (CONREV * FRANC) +
-                                (CONREV * GEN_C_SP) +
-                                (CONREV * GEN_C_MO) +
-                                (CONREV * GEN_C_MI) +
+                                (CONREV * GEN_SP) +
+                                (CONREV * GEN_RPG) +
+                                (CONREV * GEN_MI) +
                                 (CONREV * OPUSD) +
-                                (CONREV * singleplayer) +
-                                (CONREV * multiplayer) +
-                                (CONREV * coop) +
-                                (CONREV * pvp) +
+                                (CONREV * OMUL_D) +
+                                (CONREV * SP.MP_D) +
                                 (CONREV * PLF_PC) +
                                 (CONREV * ESRB_M) +
                                 (PROFREV * FRANC) +
-                                (PROFREV * GEN_C_SP) +
-                                (PROFREV * GEN_C_MO) +
-                                (PROFREV * GEN_C_MI) +
+                                (PROFREV * GEN_SP) +
+                                (PROFREV * GEN_RPG) +
+                                (PROFREV * GEN_MI) +
                                 (PROFREV * OPUSD) +
-                                (PROFREV * singleplayer) +
-                                (PROFREV * multiplayer) +
-                                (PROFREV * coop) +
-                                (PROFREV * pvp) +
+                                (PROFREV * OMUL_D) +
+                                (PROFREV * SP.MP_D) +
                                 (PROFREV * PLF_PC) +
-                                (PROFREV * ESRB_M) +
+                                (PROFREV * ESRB_M)+
                                 PUBS +
                                 INDIE +
                                 soundtrack +
                                 SMPRES +
-                                N_LAN,                     
+                                N_LAN,
                               data=data_prepped, na.action = na.omit))
 
 # Visually investigate the distribution of the residuals of untreatedModel2
@@ -334,39 +277,15 @@ ggplot(data.frame(untreatedModel3$residuals), aes(x=untreatedModel3.residuals)) 
   ylab("Density")+
   theme_classic()
 
-# Statistical tests of normal distribution of the residuals of model 2
+# Statistical tests of normal distribution of the residuals of model_1A
 
 # All tests combined (olsrr pack)
-ols_test_normality(cor_mod_1)
+ols_test_normality(model_1A)
 
-# Anderson-Darling
-nortest::ad.test(untreatedModel2$residuals)
-
-# Cramer-von Mises
-nortest::cvm.test(untreatedModel2$residuals)
-
-# Shapiro-Wilk
-shapiro.test(untreatedModel2$residuals)
-
-# Kolmogorov-Smirnov
-ks.test(untreatedModel2$residuals, "pnorm")
-
-# Statistical tests of normal distribution of the residuals of model 3
+# Statistical tests of normal distribution of the residuals of model_1B
 
 # All tests combined (olsrr pack)
 ols_test_normality(model_1B)
-
-# Anderson-Darling
-nortest::ad.test(untreatedModel3$residuals)
-
-# Cramer-von Mises
-nortest::cvm.test(untreatedModel3$residuals)
-
-# Shapiro-Wilk
-shapiro.test(untreatedModel3$residuals)
-
-# Kolmogorov-Smirnov
-ks.test(untreatedModel3$residuals, "pnorm")
 
 
 ###############################################################################
@@ -885,22 +804,22 @@ msummary(GC_model_selection, output = "table_pvalue_selection3.docx", estimate =
 
 RSE_model_5A <- coeftest(model_5A, vcov = vcovHC(model_5A, type = "HC0", save = TRUE))
 
-msummary(RSE_model_5A, output = "../gen/model_5A/RSE_model5A_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_5A, output = "../gen/RSE_model5A_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(RSE_model_5A, output = "../gen/model_5A/RSE_model5A_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_5A, output = "../gen/RSE_model5A_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(RSE_model_5A, output = "../gen/model_5A/RSE_model5A_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_5A, output = "../gen/RSE_model5A_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
 # Retrieving r^2 etc.
-msummary(model_5A, output = "../gen/model_5A/model5A_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_5A, output = "../gen/model5A_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
 # Regular version
 
-msummary(model_5A, output = "../gen/model_5A/model5A_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_5A, output = "../gen/model5A_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(model_5A, output = "../gen/model_5A/model5A_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_5A, output = "../gen/model5A_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(model_5A, output = "../gen/model_5A/model5A_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_5A, output = "../gen/model5A_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
 
 ###############################################################################
@@ -948,22 +867,22 @@ H1C_model5A_answer
 
 RSE_model_3B <- coeftest(model_3B, vcov = vcovHC(model_3B, type = "HC0", save = TRUE))
 
-msummary(RSE_model_3B, output = "../gen/model_3B/RSE_model3B_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_3B, output = "../gen/RSE_model3B_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(RSE_model_3B, output = "../gen/model_3B/RSE_model3B_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_3B, output = "../gen/RSE_model3B_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(RSE_model_3B, output = "../gen/model_3B/RSE_model3B_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_3B, output = "../gen/RSE_model3B_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
 # Retrieving r^2 etc.
-msummary(model_3B, output = "../gen/model_3B/model3B_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_3B, output = "../gen/model3B_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
 # Regular version
 
-msummary(model_3B, output = "../gen/model_3B/model3B_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_3B, output = "../gen/model3B_coef.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(model_3B, output = "../gen/model_3B/model3B_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_3B, output = "../gen/model3B_sterror.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(model_3B, output = "../gen/model_3B/model3B_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_3B, output = "../gen/model3B_pvalue.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
 
 ###############################################################################
@@ -1348,14 +1267,14 @@ model_3B_raw <- lm(ln_USV ~ (CONREV * FRANC) +
 
 RSE_model_3B_raw <- coeftest(model_3B_raw, vcov = vcovHC(model_3B_raw, type = "HC0", save = TRUE))
 
-msummary(RSE_model_3B_raw, output = "../gen/model_3B/RSE_model3B_coef_raw.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_3B_raw, output = "../gen/RSE_model3B_coef_raw.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(RSE_model_3B_raw, output = "../gen/model_3B/RSE_model3B_sterror_raw.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_3B_raw, output = "../gen/RSE_model3B_sterror_raw.docx", estimate = "std.error", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
-msummary(RSE_model_3B_raw, output = "../gen/model_3B/RSE_model3B_pvalue_raw.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
+msummary(RSE_model_3B_raw, output = "../gen/RSE_model3B_pvalue_raw.docx", estimate = "p.value", gof_omit = "AIC|BIC|Log|Pseudo", title = "Table X. Regression models summary", statistic = NULL)
 
 # Retrieving r^2 etc.
-msummary(model_3B_raw, output = "../gen/model_3B/model3B_coef_raw.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
+msummary(model_3B_raw, output = "../gen/model3B_coef_raw.docx", gof_omit = "AIC|BIC|Log|Pseudo", stars=T, title = "Table X. Regression models summary", statistic = NULL)
 
 
 ###############################################################################
